@@ -1,9 +1,9 @@
 <template>
   <div class="app-container calendar-list-container">
     <div class="filter-container">
-      <el-input style="width: 200px;" class="filter-item" placeholder="标题" v-model="listQuery.title">
+      <el-input style="width: 200px;" class="filter-item" placeholder="名字" v-model="listQuery.username">
       </el-input>
-      <el-button class="filter-item" type="primary" v-waves icon="el-icon-search">搜索</el-button>
+      <el-button class="filter-item" type="primary" v-waves icon="el-icon-search" @click="handleFilter">搜索</el-button>
       <el-button class="filter-item" style="margin-left: 10px;" @click="handleCreate" type="primary" icon="el-icon-edit">添加</el-button>
       <el-button class="filter-item" type="primary" v-waves icon="el-icon-download" @click="handleDownload">导出</el-button>
     </div>
@@ -65,8 +65,12 @@
     </div>
 
         <el-dialog :title="dialogTitle" :visible.sync="dialogFormVisible">
-	      <el-form class="small-space" :model="temp" label-position="left" label-width="70px" style='width: 400px; margin-left:50px;'>
-	        <el-form-item label="姓名">
+	      <el-form class="small-space" :model="temp" ref="temp" label-position="left" label-width="70px" style='width: 400px; margin-left:50px;'>
+	        <el-form-item label="姓名" prop="username"
+	        	:rules="[
+				      { required: true, message: '姓名不能为空', trigger: 'blur'}
+				    ]"
+	        >
 	          <el-input v-model.trim="temp.username"></el-input>
 	        </el-form-item>
 	
@@ -77,11 +81,19 @@
             <el-radio v-model="temp.sex" label="未知">未知</el-radio>
 	        </el-form-item>
 	
-	        <el-form-item label="电子邮件">
+	        <el-form-item label="电子邮件" prop="email"
+	        	:rules="[
+				      { required: true, message: '电子邮件不能为空', trigger: 'blur'}
+				    ]"
+	        >
 	          <el-input v-model.trim="temp.email"></el-input>
 	        </el-form-item>
 	
-	        <el-form-item label="手机号码">
+	        <el-form-item label="手机号码" prop="phone"
+	        	:rules="[
+				      { required: true, message: '手机号码不能为空', trigger: 'blur'}
+				    ]"
+	        >
 	          <el-input v-model.trim="temp.phone"></el-input>
 	        </el-form-item>
 	
@@ -90,8 +102,8 @@
 	        </el-form-item>
 	      </el-form>
 	      <div slot="footer" class="dialog-footer">
-	        <el-button @click="dialogFormVisible = false">取 消</el-button>
-	        <el-button type="primary" @click="updateData">确 定</el-button>
+	        <el-button @click="guanbi('temp')">取 消</el-button>
+	        <el-button type="primary" @click="updateData('temp')">确 定</el-button>
 	      </div>
 	    </el-dialog>
 
@@ -101,6 +113,7 @@
 <script>
 import { fetchList, AddUser, UpdateUser, DeleteUser } from '@/api/article'
 import waves from '@/directive/waves' // 水波纹指令
+import { parseTime } from '@/utils'
 
 export default {
   name: 'complexTable',
@@ -143,6 +156,10 @@ export default {
         this.listLoading = false
       })
     },
+    handleFilter() {
+    	this.listQuery.page = 1
+    	this.getList()
+    },
     handleSizeChange(val) {
       this.listQuery.limit = val
       this.getList()
@@ -162,7 +179,7 @@ export default {
       this.temp = {
         username: '',
         password: '888888',
-        sex: '',
+        sex: '男',
         email: '',
         phone: '',
         remark: ''
@@ -178,30 +195,37 @@ export default {
       this.dialogTitle = '修改用户'
       this.dialogFormVisible = true
     },
-    updateData() {
-      // 根据id判断 修改操作（true）还是删除操作
-      if (this.temp.id) {
-        console.log(this.temp.id)
-        UpdateUser(this.temp)
-          .then((result) => {
-            if (!result.error_code) {
-              this.dialogFormVisible = false
-              this.getList()
-            }
-          }, () => {
-            console.log('操作失败')
-          })
-      } else {
-        AddUser(this.temp)
-          .then((res) => {
-            if (!res.error_code) {
-              this.dialogFormVisible = false
-              this.getList()
-            }
-          }, () => {
-            console.log('操作失败')
-          })
-      }
+    updateData(formName) {
+    	this.$refs[formName].validate((valid) => {
+	      if (valid) {
+	        // 根据id判断 修改操作（true）还是删除操作
+		      if (this.temp.id) {
+		        console.log(this.temp.id)
+		        UpdateUser(this.temp)
+		          .then((result) => {
+		            if (!result.error_code) {
+		              this.dialogFormVisible = false
+		              this.getList()
+		            }
+		          }, () => {
+		            console.log('操作失败')
+		          })
+		      } else {
+		        AddUser(this.temp)
+		          .then((res) => {
+		            if (!res.error_code) {
+		              this.dialogFormVisible = false
+		              this.getList()
+		            }
+		          }, () => {
+		            console.log('操作失败')
+		          })
+		      }
+	      } else {
+	        console.log('error submit!!');
+	        return false;
+	      }
+	    });
     },
     handleDelete(row) {
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -238,12 +262,25 @@ export default {
     handleDownload() {
       require.ensure([], () => {
         const { export_json_to_excel } = require('vendor/Export2Excel')
-        const tHeader = ['时间', '地区', '类型', '标题', '重要性']
-        const filterVal = ['timestamp', 'province', 'type', 'title', 'importance']
+        const tHeader = ['姓名', '性别', 'Email', '手机号', '备注']
+        const filterVal = ['username', 'sex', 'email', 'phone', 'remark']
         const data = this.formatJson(filterVal, this.list)
         export_json_to_excel(tHeader, data, 'table数据')
       })
-    }
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        if (j === 'timestamp') {
+          return parseTime(v[j])
+        } else {
+          return v[j]
+        }
+      }))
+    },
+    guanbi(formName) {
+    	this.dialogFormVisible = false
+	    this.$refs[formName].resetFields()
+	  }
   }
 }
 </script>
