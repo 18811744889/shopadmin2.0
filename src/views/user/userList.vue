@@ -157,8 +157,8 @@ export default {
       })
     },
     handleFilter() {
-    	this.listQuery.page = 1
-    	this.getList()
+      this.listQuery.page = 1
+      this.getList()
     },
     handleSizeChange(val) {
       this.listQuery.limit = val
@@ -196,36 +196,36 @@ export default {
       this.dialogFormVisible = true
     },
     updateData(formName) {
-    	this.$refs[formName].validate((valid) => {
-	      if (valid) {
-	        // 根据id判断 修改操作（true）还是删除操作
-		      if (this.temp.id) {
-		        console.log(this.temp.id)
-		        UpdateUser(this.temp)
-		          .then((result) => {
-		            if (!result.error_code) {
-		              this.dialogFormVisible = false
-		              this.getList()
-		            }
-		          }, () => {
-		            console.log('操作失败')
-		          })
-		      } else {
-		        AddUser(this.temp)
-		          .then((res) => {
-		            if (!res.error_code) {
-		              this.dialogFormVisible = false
-		              this.getList()
-		            }
-		          }, () => {
-		            console.log('操作失败')
-		          })
-		      }
-	      } else {
-	        console.log('error submit!!');
-	        return false;
-	      }
-	    });
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // 根据id判断 修改操作（true）还是删除操作
+          if (this.temp.id) {
+            console.log(this.temp.id)
+            UpdateUser(this.temp)
+              .then((result) => {
+                if (!result.error_code) {
+                  this.dialogFormVisible = false
+                  this.getList()
+                }
+              }, () => {
+                console.log('操作失败')
+              })
+          } else {
+            AddUser(this.temp)
+              .then((res) => {
+                if (!res.error_code) {
+                  this.dialogFormVisible = false
+                  this.getList()
+                }
+              }, () => {
+                console.log('操作失败')
+              })
+          }
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     },
     handleDelete(row) {
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -278,9 +278,9 @@ export default {
       }))
     },
     guanbi(formName) {
-    	this.dialogFormVisible = false
-	    this.$refs[formName].resetFields()
-	  }
+      this.dialogFormVisible = false
+      this.$refs[formName].resetFields()
+    }
   }
 }
 </script>

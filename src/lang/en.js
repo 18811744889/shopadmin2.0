@@ -27,7 +27,7 @@ export default {
     dynamicTable: 'Dynamic Table',
     dragTable: 'Drag Table',
     inlineEditTable: 'Inline Edit',
-    complexTable: 'Complex Table',
+    complexTable: 'complexTable',
     tab: 'Tab',
     form: 'Form',
     createForm: 'Create Form',
@@ -43,6 +43,12 @@ export default {
     exportZip: 'Zip',
     theme: 'Theme',
     clipboardDemo: 'Clipboard',
-    i18n: 'I18n'
+    i18n: 'I18n',
+    product: 'product',
+    productList: 'productList',
+    productAdd: 'productAdd',
+    userList: 'userList',
+    order: 'order',
+    user: 'user'
   }
 }

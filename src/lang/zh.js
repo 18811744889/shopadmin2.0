@@ -18,7 +18,7 @@ export default {
     countTo: 'CountTo',
     componentMixin: '小组件',
     backToTop: '返回顶部',
-    charts: '图表',
+    charts: '报表管理',
     keyboardChart: '键盘图表',
     lineChart: '折线图',
     mixChart: '混合图表',
@@ -27,7 +27,7 @@ export default {
     dynamicTable: '动态table',
     dragTable: '拖拽table',
     inlineEditTable: 'table内编辑',
-    complexTable: '综合table',
+    complexTable: '订单列表',
     tab: 'Tab',
     form: '表单',
     createForm: '创建表单',
@@ -43,6 +43,12 @@ export default {
     exportZip: 'zip',
     theme: '换肤',
     clipboardDemo: 'clipboard',
-    i18n: '国际化'
+    i18n: '国际化',
+    product: '商品管理',
+    productList: '商品列表',
+    productAdd: '商品添加',
+    user: '用户管理',
+    userList: '用户列表',
+    order: '订单管理'
   }
 }
